@@ -1,10 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './Todo.scss'
-import { getTodoApi, addTodoApi } from '../../services/todoService'
+import { getTodoApi, addTodoApi, deleteTodoApi, updateTodoApi } from '../../services/todoService'
 function Todo() {
     const [todoList, setTodoList] = useState([]);
     const [taskName, setTaskName] = useState('')
 
+    // const taskId = useRef();
+
+    //Add Task
+    const handleAddTask = async (e) => {
+        e.preventDefault();
+        await addTodoApi({
+            name: taskName,
+            isCompleted: false,
+        })
+        setTodoList(await getTodoApi());
+        setTaskName('')
+    }
+
+    //Get All Task
     useEffect(() => {
         const getAllTasks = async () => {
             setTodoList(await getTodoApi());
@@ -12,24 +26,25 @@ function Todo() {
         getAllTasks()
     }, [])
 
-    const handleAddTask = async (e) => {
-        e.preventDefault();
-        await addTodoApi({
-            name: taskName,
-            isCompleted: false,
-        })
-        const todoList = await getTodoApi();
-        setTodoList(todoList);
-        setTaskName('')
+
+    //Finish Task
+    const handleFinishTask = async (itemId, itemTaskName, isCompleted) => {
+        if (!isCompleted) {
+            await updateTodoApi(itemId, {
+                id: itemId,
+                name: itemTaskName,
+                isCompleted: true
+            })
+            setTodoList(await getTodoApi());
+        }
     }
 
-    console.log(todoList);
+    //Delete Task
+    const handleDeleteTask = async (id) => {
+        await deleteTodoApi(id)
+        setTodoList(await getTodoApi());
+    }
 
-    // const handleDeleteTask = async (id) => {
-    //     await deleteTodoApi(id)
-    // }
-
-    console.log(taskName)
     return (
         <section className="vh-100 gradient-custom" style={{ backgroundColor: '#eee' }}>
             <div className="container py-5 h-100">
@@ -62,17 +77,18 @@ function Todo() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {todoList && todoList.length > 0 && todoList.map(item => {
-                                            return (<tr key={item.id}>
-                                                <th scope="row">{item.id}</th>
-                                                <td>{item.name}</td>
-                                                <td>{!item.isCompleted ? 'In progress' : 'Finished'}</td>
-                                                <td>
-                                                    <button type="submit" className="btn btn-danger">Delete</button>
-                                                    <button type="submit" className="btn btn-success ms-1">Finished</button>
-                                                </td>
-                                            </tr>)
-                                        })}
+                                        {todoList && todoList.length > 0 && todoList.map(item =>
+                                        // taskId.current = item.id
+                                        (<tr key={item.id}>
+                                            <th scope="row">{item.id}</th>
+                                            <td>{item.name}</td>
+                                            <td>{!item.isCompleted ? 'In progress' : 'Finished'}</td>
+                                            <td>
+                                                <button type="submit" className="btn btn-danger" onClick={() => handleDeleteTask(item.id)}>Delete</button>
+                                                <button type="submit" className="btn btn-success ms-1" style={item.isCompleted ? { display: 'none' } : {}} onClick={() => handleFinishTask(item.id, item.name, item.isCompleted)}>Finished</button>
+                                            </td>
+                                        </tr>)
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
