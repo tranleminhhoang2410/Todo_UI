@@ -1,23 +1,37 @@
 import { useState, useEffect, useRef } from 'react'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './Todo.scss'
 import { getTodoApi, addTodoApi, deleteTodoApi, updateTodoApi } from '../../services/todoService'
+
 function Todo() {
     const [todoList, setTodoList] = useState([]);
     const [taskName, setTaskName] = useState('');
     const inputRef = useRef()
 
-    console.log(inputRef.current)
 
     //Add Task
     const handleAddTask = async (e) => {
         e.preventDefault();
-        await addTodoApi({
-            name: taskName,
-            isCompleted: false,
-        })
-        setTodoList(await getTodoApi());
-        setTaskName('')
-        inputRef.current.focus();
+        if (taskName !== '') {
+            await addTodoApi({
+                name: taskName,
+                isCompleted: false,
+            })
+            setTodoList(await getTodoApi());
+            setTaskName('')
+            inputRef.current.focus();
+        } else {
+            toast.error('Task name cannot be empty !', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+            });
+        }
     }
 
     //Get All Task
@@ -48,11 +62,15 @@ function Todo() {
     }
 
     //Search Task By Name
-    const handleSearchTaskByName = (e) => {
+    const handleSearchTaskByName = async (e) => {
         e.preventDefault();
-        const updatedList = todoList.filter(item => item.name.toLowerCase().indexOf(taskName.toLowerCase()) !== -1);
-        setTodoList(updatedList);
-        setTaskName('')
+        if (taskName !== '') {
+            const updatedList = todoList.filter(item => item.name.toLowerCase().indexOf(taskName.toLowerCase()) !== -1);
+            setTodoList(updatedList);
+            setTaskName('')
+        } else {
+            setTodoList(await getTodoApi())
+        }
     }
 
 
@@ -107,6 +125,7 @@ function Todo() {
                     </div>
                 </div>
             </div>
+            <ToastContainer />
         </section>
     );
 }

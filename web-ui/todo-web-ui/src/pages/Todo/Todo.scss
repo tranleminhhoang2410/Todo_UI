@@ -33,3 +33,9 @@
 .form-control:not(:focus) + .form-label{
   color: black;
 }
+
+tbody {
+  th, td{
+    vertical-align: middle;
+  }
+}
