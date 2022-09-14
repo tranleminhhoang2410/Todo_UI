@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import './Todo.scss'
-import { getTodoApi, addTodoApi, deleteTodoApi, updateTodoApi } from '../../services/todoService'
+import { getTodoApi, addTodoApi, deleteTodoApi, updateTodoApi} from '../../services/todoService'
 function Todo() {
     const [todoList, setTodoList] = useState([]);
-    const [taskName, setTaskName] = useState('')
+    const [taskName, setTaskName] = useState('');
+    const inputRef = useRef()
 
-    // const taskId = useRef();
+    console.log(inputRef.current)
 
     //Add Task
     const handleAddTask = async (e) => {
@@ -16,16 +17,17 @@ function Todo() {
         })
         setTodoList(await getTodoApi());
         setTaskName('')
+        inputRef.current.focus();
     }
 
     //Get All Task
     useEffect(() => {
         const getAllTasks = async () => {
             setTodoList(await getTodoApi());
+            inputRef.current.focus();
         }
         getAllTasks()
     }, [])
-
 
     //Finish Task
     const handleFinishTask = async (itemId, itemTaskName, isCompleted) => {
@@ -45,6 +47,14 @@ function Todo() {
         setTodoList(await getTodoApi());
     }
 
+    //Search Task By Name
+    const handleSearchTaskByName = (e) => {
+        e.preventDefault();
+        const updatedList = todoList.filter(item => item.name.toLowerCase().indexOf(taskName.toLowerCase()) !== -1);
+        setTodoList(updatedList);
+        setTaskName('')
+    }
+    
     return (
         <section className="vh-100 gradient-custom" style={{ backgroundColor: '#eee' }}>
             <div className="container py-5 h-100">
@@ -56,7 +66,7 @@ function Todo() {
                                 <form className="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2">
                                     <div className="col-12">
                                         <div className="form-outline">
-                                            <input type="text" id="form1" className="form-control" value={taskName} onChange={(e) => { setTaskName(e.target.value) }} />
+                                            <input ref={inputRef} type="text" id="form1" className="form-control" value={taskName} onChange={(e) => { setTaskName(e.target.value) }} />
                                             <label className="form-label" htmlFor="form1">Enter a task here</label>
                                         </div>
                                     </div>
@@ -64,7 +74,7 @@ function Todo() {
                                         <button type="submit" className="btn btn-primary" onClick={handleAddTask}>Save</button>
                                     </div>
                                     <div className="col-12">
-                                        <button type="submit" className="btn btn-warning">Get tasks</button>
+                                        <button type="submit" className="btn btn-warning" onClick={handleSearchTaskByName}>Get tasks</button>
                                     </div>
                                 </form>
                                 <table className="table mb-4">

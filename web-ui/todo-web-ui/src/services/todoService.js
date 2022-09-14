@@ -12,6 +12,10 @@ export const getTodoApi = () => {
     return axios.get(END_POINTS.TODO_ITEMS)
 }
 
+export const getTodoByNameApi = (name) => {
+    return axios.get(`${END_POINTS.TODO_ITEMS}/GetByName/${name}`)
+}
+
 export const updateTodoApi = (id, data) => {
     return axios.put(`${END_POINTS.TODO_ITEMS}/${id}`, data)
 }
