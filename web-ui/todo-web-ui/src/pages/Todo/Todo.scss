@@ -8,3 +8,28 @@
     radial-gradient(100% 148.07% at 0% 0%, #fff500 0%, #51d500 100%);
   background-blend-mode: screen, color-dodge, overlay, difference, normal;
 }
+
+.form-outline{
+    position: relative;
+}
+
+.form-label{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0.75rem;
+    transition: 0.25s ease;
+}
+
+.form-control:not(:placeholder-shown) + .form-label,
+.form-control:focus + .form-label{
+    top: 0;
+    display: inline-block;
+    padding: 0 0.375rem;
+    background-color: white;
+    color: #86b7fe;
+}
+
+.form-control:not(:focus) + .form-label{
+  color: black;
+}

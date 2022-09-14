@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import './Todo.scss'
-import { getTodoApi, addTodoApi, deleteTodoApi, updateTodoApi} from '../../services/todoService'
+import { getTodoApi, addTodoApi, deleteTodoApi, updateTodoApi } from '../../services/todoService'
 function Todo() {
     const [todoList, setTodoList] = useState([]);
     const [taskName, setTaskName] = useState('');
@@ -54,7 +54,8 @@ function Todo() {
         setTodoList(updatedList);
         setTaskName('')
     }
-    
+
+
     return (
         <section className="vh-100 gradient-custom" style={{ backgroundColor: '#eee' }}>
             <div className="container py-5 h-100">
@@ -66,7 +67,7 @@ function Todo() {
                                 <form className="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2">
                                     <div className="col-12">
                                         <div className="form-outline">
-                                            <input ref={inputRef} type="text" id="form1" className="form-control" value={taskName} onChange={(e) => { setTaskName(e.target.value) }} />
+                                            <input ref={inputRef} type="text" id="form1" placeholder=" " className="form-control" value={taskName} onChange={(e) => { setTaskName(e.target.value) }} />
                                             <label className="form-label" htmlFor="form1">Enter a task here</label>
                                         </div>
                                     </div>

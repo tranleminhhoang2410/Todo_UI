@@ -50,23 +50,6 @@ namespace TodoApi.Controllers
             return todoItem;
         }
 
-        [HttpGet("GetByName/{name}")]
-        public async Task<ActionResult<TodoItem>> GetTodoItem(string name)
-        {
-            if (_context.TodoItems == null)
-            {
-                return NotFound();
-            }
-            var todoItem = await _context.TodoItems.Where(c=>c.Name.Contains(name)).ToListAsync();
-
-            if (todoItem == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(todoItem);
-        }
-
         // PUT: api/TodoItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
