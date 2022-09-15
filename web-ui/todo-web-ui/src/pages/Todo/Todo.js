@@ -1,12 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import Modal from 'react-modal';
+
 import './Todo.scss'
+import AuthForm from '../../components/AuthForm'
 import { getTodoApi, addTodoApi, deleteTodoApi, updateTodoApi } from '../../services/todoService'
 
 function Todo() {
     const [todoList, setTodoList] = useState([]);
     const [taskName, setTaskName] = useState('');
+    const searchList = todoList.filter(item => item.name.toLowerCase().indexOf(taskName.toLowerCase()) !== -1);
     const inputRef = useRef()
 
 
@@ -20,6 +26,15 @@ function Todo() {
             })
             setTodoList(await getTodoApi());
             setTaskName('')
+            toast.success(`'${taskName}' was added successfully !`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+            });
             inputRef.current.focus();
         } else {
             toast.error('Task name cannot be empty !', {
@@ -51,22 +66,39 @@ function Todo() {
                 name: itemTaskName,
                 isCompleted: true
             })
-            setTodoList(await getTodoApi());
+            setTodoList(await getTodoApi())
+            toast.success(`'${itemTaskName}' was finished !`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+            });
         }
     }
 
     //Delete Task
-    const handleDeleteTask = async (id) => {
+    const handleDeleteTask = async (id, name) => {
         await deleteTodoApi(id)
         setTodoList(await getTodoApi());
+        toast.success(`'${name}' was deleted succesfully !`, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+        });
     }
 
     //Search Task By Name
     const handleSearchTaskByName = async (e) => {
         e.preventDefault();
         if (taskName !== '') {
-            const updatedList = todoList.filter(item => item.name.toLowerCase().indexOf(taskName.toLowerCase()) !== -1);
-            setTodoList(updatedList);
+            setTodoList(searchList);
             setTaskName('')
         } else {
             setTodoList(await getTodoApi())
@@ -74,9 +106,52 @@ function Todo() {
     }
 
 
+    //custom modal
+    const customStyles = {
+        content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            maxWidth: '500px',
+            minWidth: '300px',
+            maxHeight: '700px',
+            width: '30%',
+            backgroundColor: '#FFFFFF',
+            borderRadius: '25px',
+        },
+    };
+
+    const [modalIsOpen, setIsOpen] = useState(false);
+    const [typeForm, setTypeForm] = useState('');
+
+    function openModal(type) {
+        setIsOpen(true);
+        setTypeForm(type);
+    }
+
+    function closeModal() {
+        setIsOpen(false);
+    }
+
     return (
         <section className="vh-100 gradient-custom" style={{ backgroundColor: '#eee' }}>
             <div className="container py-5 h-100">
+                <div className="auth-action">
+                    <button className="btn btn-primary" onClick={() => openModal('login')}>Log in</button>
+                    <button className="btn btn-success" onClick={() => openModal('signup')}>Sign up</button>
+                </div>
+                <Modal
+                    height={typeForm === 'signup' ? '80%' : '60%'}
+                    isOpen={modalIsOpen}
+                    onRequestClose={closeModal}
+                    style={customStyles}
+                    ariaHideApp={false}
+                >
+                    {typeForm === 'signup' ? <AuthForm type='signup' /> : <AuthForm type='login' />}
+                </Modal>
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="col col-lg-9 col-xl-7">
                         <div className="card rounded-3">
@@ -113,7 +188,7 @@ function Todo() {
                                             <td>{item.name}</td>
                                             <td>{!item.isCompleted ? 'In progress' : 'Finished'}</td>
                                             <td>
-                                                <button type="submit" className="btn btn-danger" onClick={() => handleDeleteTask(item.id)}>Delete</button>
+                                                <button type="submit" className="btn btn-danger" onClick={() => handleDeleteTask(item.id, item.name)}>Delete</button>
                                                 <button type="submit" className="btn btn-success ms-1" style={item.isCompleted ? { display: 'none' } : {}} onClick={() => handleFinishTask(item.id, item.name, item.isCompleted)}>Finished</button>
                                             </td>
                                         </tr>)
