@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "UhlxzA85GyfVlVb4kzmmNX9x3cRyHYJ5rfTSlDRQENaZyCfUbDg4r8Grhf1s7x1MsuSjwk9L2VpQuWydjvXPtQ==",
+  "dgSpecHash": "xd/vIrhK6hggVfiKm/1bKeKVZ7CgmybbojNbDxtVOkTmVzxkrlH8d74rFvs3AwDw46Q7OcjCKU3ivJJ1DlHkVQ==",
   "success": true,
   "projectFilePath": "E:\\Code\\Web\\Fullstack\\TodoApp\\api\\TodoApi\\TodoApi\\TodoApi.csproj",
   "expectedPackageFiles": [
